@@ -12,6 +12,13 @@ const postUsers = async (req, res) => {
     if (!user.username) {
       throw new HttpBadRequestException('Empty username');
     }
+    const users = await getAllUsers();
+    const existingUser = users.find(u => u.username.toLowerCase() === user.username.toLowerCase());
+
+    if (existingUser) {
+      throw new HttpBadRequestException('This username already exists');
+    }
+
     const createdUser = await addUser(user);
     return res.json(createdUser);
   } catch (e) {
