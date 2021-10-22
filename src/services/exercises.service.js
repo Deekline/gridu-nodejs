@@ -1,6 +1,6 @@
 const {HttpBadRequestException} = require('../../error-handling');
 const Db = require('../db/index');
-const {isDateValid} = require('../utils');
+const {isDateValid, getTime} = require('../utils');
 const {
   CREATE_EXERCISE,
   CREATE_EXERCISE_WITH_DATE,
@@ -19,7 +19,7 @@ const createExercise = async (userId, exercise) => {
         throw new HttpBadRequestException('Date format is not valid, use yyyy-mm-dd');
       }
 
-      const parsedDate = +new Date(exercise.date);
+      const parsedDate = getTime(exercise.date)
       await Db.run(CREATE_EXERCISE_WITH_DATE, exercise.description, exercise.duration, userId, parsedDate);
     } else {
       await Db.run(CREATE_EXERCISE, exercise.description, exercise.duration, userId);
@@ -46,8 +46,8 @@ const getAllUsersExercises = (from, to, userId, hasLimit, limit) => {
 
 const getUserExercises = async (userId, from, to, limit) => {
   const hasLimit = limit ? 'LIMIT ?' : '';
-  const parsedFrom = from && +new Date(from);
-  const parsedTo = to && +new Date(to);
+  const parsedFrom = from && getTime(from)
+  const parsedTo = to && getTime(to)
   const getAllExercises = getAllUsersExercises(from, to, userId, hasLimit, limit);
 
   return await getAllExercises(parsedFrom, parsedTo);

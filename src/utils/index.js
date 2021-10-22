@@ -3,6 +3,11 @@ function isDateValid(date) {
   return regexp.test(date);
 }
 
+function getTime(time) {
+  return new Date(time).getTime()
+}
+
 module.exports = {
   isDateValid,
+  getTime
 };
